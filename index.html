@@ -25,8 +25,10 @@
     transform-origin:center center;
     box-shadow:0 0 0 10px #000,0 0 0 12px #55565a,0 30px 90px rgba(0,0,0,.7);display:flex;flex-direction:column}
   #notch{position:absolute;top:12px;left:50%;transform:translateX(-50%);width:120px;height:34px;background:#000;border-radius:20px;z-index:20}
-  #phone.bare{border-radius:0;box-shadow:none}
-  #phone.bare #notch{display:none}
+  #phone.bare{width:100vw;height:100dvh;border-radius:0;box-shadow:none;transform:none}
+  #phone.bare #notch,#phone.bare #status{display:none}
+  #phone.bare #hdr{padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  #phone.bare #tabs{height:auto;min-height:52px;padding-bottom:calc(6px + env(safe-area-inset-bottom,0px))}
   /* ---- status bar ---- */
   #status{height:44px;display:flex;justify-content:space-between;align-items:flex-end;padding:0 28px 6px;font-size:15px;font-weight:600}
   #status .r{display:flex;gap:6px;align-items:center;font-size:13px}
@@ -105,6 +107,8 @@
   .pop.sm{font-size:18px;color:#fff}
   @keyframes pop{0%{opacity:0;transform:translate(-50%,10px) scale(.7)}15%{opacity:1;transform:translate(-50%,0) scale(1.1)}100%{opacity:0;transform:translate(-50%,-60px) scale(1)}}
   #phone.shake{animation:shk .35s}
+  #phone.bare.shake{animation:shkb .35s}
+  @keyframes shkb{0%,100%{transform:none}20%{transform:translate(-5px,3px)}40%{transform:translate(5px,-3px)}60%{transform:translate(-4px,-2px)}80%{transform:translate(4px,2px)}}
   @keyframes shk{0%,100%{transform:scale(var(--k))}20%{transform:scale(var(--k)) translate(-5px,3px)}40%{transform:scale(var(--k)) translate(5px,-3px)}60%{transform:scale(var(--k)) translate(-4px,-2px)}80%{transform:scale(var(--k)) translate(4px,2px)}}
   #flash{position:absolute;inset:0;background:var(--acc);opacity:0;pointer-events:none;z-index:9}
   #flash.on{animation:fla .3s ease-out}
@@ -304,8 +308,12 @@ function rowY(rowFromBottom){ return GH-(rowFromBottom+1)*RH; }
 function layout(){
   const w=phone.clientWidth;
   const avail=phone.clientHeight - $('#status').offsetHeight - $('#hdr').offsetHeight - $('#tabs').offsetHeight;
-  const side=Math.floor(Math.min(w/COLS, Math.max(120,avail)/5));
-  CW=side; RH=side; ROWS=Math.max(5,Math.floor(avail/side));
+  // tiles are square and fill the width; the row count adapts to the screen
+  const full=w/COLS, h=Math.max(120,avail);
+  // 5 rows when they cost almost no width, otherwise 4 rows edge to edge
+  ROWS = (h/5)/full >= 0.82 ? 5 : 4;
+  const side=Math.floor(Math.min(full, h/ROWS));
+  CW=side; RH=side;
   GH=ROWS*side; grid.style.height=GH+'px';
   OX=Math.round((w-side*COLS)/2);
   grid.style.setProperty('--cw',CW+'px'); grid.style.setProperty('--rh',RH+'px');
@@ -313,9 +321,8 @@ function layout(){
 addEventListener('resize',()=>{fit();layout()});
 function fit(){
   const W=innerWidth, H=innerHeight;
-  const bare=W<520;                               // phone-ish width: edge to edge
-  const k=bare ? Math.min(W/390,H/844)            // fill it
-               : Math.min(1,(H-40)/844,(W-40)/390); // keep the frame, scale to fit
+  const bare=W<520;                               // phone-ish width: use the real screen
+  const k=bare ? 1 : Math.min(1,(H-40)/844,(W-40)/390);
   phone.classList.toggle('bare',bare);
   document.getElementById('stage').style.background=bare?'#000':'';
   phone.style.setProperty('--k',k.toFixed(4));
