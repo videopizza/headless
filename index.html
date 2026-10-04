@@ -484,7 +484,7 @@ const SKIN=['#f1d3b8','#d9a47f','#b57b57','#8a5a3c','#5c3a26'];
 const DECK=[];
 DECK.push({lvl:0,type:'head',svg:'silhouette'},{lvl:0,type:'feet',svg:'foot'});
 SKIN.forEach(c=>DECK.push({lvl:0,type:'torso',svg:'torso',skin:c},{lvl:0,type:'legs',svg:'legs',skin:c}));
-DECK.push({lvl:2,type:'head',svg:'silbar'},{lvl:3,type:'head',svg:'nopic'});
+// head variants (silbar, nopic) disabled: only the classic silhouette
 const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111','thelawunda','hurricane_season2','gayhorror666','geelherme'];
 CREATOR_TILES.forEach(f=>{ const p=f.split('_'); const part=p[p.length-2], by=p.slice(0,-2).join('_');
   if(!['torso','legs','feet'].includes(part)||!CREATORS[by]){console.warn('HEADLESS: bad creator tile name',f);return}
