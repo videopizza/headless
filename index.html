@@ -495,7 +495,7 @@ const FORCE_LVL=new URLSearchParams(location.search).get('lvl');   // ?lvl=2 to 
 function level(){ if(FORCE_LVL!==null)return Math.max(0,Math.min(LEVELS.length-1,+FORCE_LVL||0)); let l=0; LEVELS.forEach((L,i)=>{if(LIFE>=L.at)l=i}); return l; }
 /* Every game starts with the plain SVG bodies so the rules are readable.
    Artists' drawings start after ART_FROM tiles, photos after PHOTO_FROM, and their share ramps up slowly. */
-const ART_FROM=10, PHOTO_FROM=10, ART_MAX=.7, ART_RAMP=25;
+const ART_FROM=5, PHOTO_FROM=5, ART_MAX=.7, ART_RAMP=25;
 function pickLook(type){
   const L=level(), n=S?S.tiles:0;
   const pool=DECK.filter(d=>d.type===type&&d.lvl<=L);
