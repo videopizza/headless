@@ -490,14 +490,21 @@ const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111','thelawunda','h
 CREATOR_TILES.forEach(f=>{ const p=f.split('_'); const part=p[p.length-2], by=p.slice(0,-2).join('_');
   if(!['torso','legs','feet'].includes(part)||!CREATORS[by]){console.warn('HEADLESS: bad creator tile name',f);return}
   if(!CREATORS[by].approved&&!SHOW_PENDING)return;
-  DECK.push({lvl:PHOTO.includes(by)?1:0,type:part,img:`assets/tiles/creators/${f}.jpg`,by}); });
+  DECK.push({lvl:0,type:part,img:`assets/tiles/creators/${f}.jpg`,by}); });
 let LIFE=0; try{LIFE=+localStorage.getItem('hl_life')||0}catch(e){}
 const FORCE_LVL=new URLSearchParams(location.search).get('lvl');   // ?lvl=2 to preview a level
 function level(){ if(FORCE_LVL!==null)return Math.max(0,Math.min(LEVELS.length-1,+FORCE_LVL||0)); let l=0; LEVELS.forEach((L,i)=>{if(LIFE>=L.at)l=i}); return l; }
+/* Every game starts with the plain SVG bodies so the rules are readable.
+   Artists' drawings start after ART_FROM tiles, photos after PHOTO_FROM, and their share ramps up slowly. */
+const ART_FROM=20, PHOTO_FROM=32, ART_MAX=.7, ART_RAMP=25;
 function pickLook(type){
-  const L=level(); const pool=DECK.filter(d=>d.type===type&&d.lvl<=L&&!(L>=3&&d.svg&&d.lvl===0&&DECK.some(x=>x.type===type&&!x.svg&&x.lvl<=L)));
-  const w=pool.map(d=>d.lvl===L?3:d.lvl===L-1?1.5:.5); let r=Math.random()*w.reduce((a,b)=>a+b,0);
-  for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<=0)return pool[i]; } return pool[pool.length-1];
+  const L=level(), n=S?S.tiles:0;
+  const pool=DECK.filter(d=>d.type===type&&d.lvl<=L);
+  const svg=pool.filter(d=>d.svg), art=pool.filter(d=>!d.svg&&n>=(PHOTO.includes(d.by)?PHOTO_FROM:ART_FROM));
+  const p=Math.min(ART_MAX,Math.max(0,(n-ART_FROM+1)/ART_RAMP*ART_MAX));
+  if(art.length&&Math.random()<p) return art[Math.random()*art.length|0];
+  const w=svg.map(d=>d.lvl===L?3:d.lvl===L-1?1.5:.5); let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<svg.length;i++){ r-=w[i]; if(r<=0)return svg[i]; } return svg[svg.length-1];
 }
 const short=h=>h.length>11?h.slice(0,10)+'…':h;
 const NAMES=['','','','','Any chill?','Hung','MAT','Richie','6','André','Kinky','discreet','vers','now?','🌊','🐐','visiting','⬇️','200m','gym','looking','host'];
