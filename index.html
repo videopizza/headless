@@ -210,6 +210,39 @@
   #gate .err{color:var(--danger);font-size:13px;font-weight:700;min-height:16px}
   #gate.bad input{animation:shkb .35s;box-shadow:0 0 0 2px var(--danger)}
   #gate .btn{margin-top:0;width:100%;justify-content:center}
+  #start .menu #gate{max-width:none}
+  /* ---- landing ---- */
+  #start{gap:18px}
+  #start .sil.hero{width:150px;height:150px;margin-bottom:0;box-shadow:0 0 0 3px #2c2c2e}
+  .ov .big.white,.ov .big.white em{color:var(--txt)}
+  .ov .big.white{font-size:60px}
+  #start .tag{color:#c7c7cc;font-size:17px;line-height:1.4}
+  #start .tag{font-size:16px;max-width:320px}
+  #start .tag2{color:var(--txt);font-weight:700;font-size:16px;max-width:320px;margin-top:-6px}
+  #start .menu{margin-top:8px}
+  #start .menu .ghostbtn{height:46px;font-size:15px}
+  /* ---- onboarding ---- */
+  #onb{gap:18px}
+  .demo{position:relative;width:min(58vw,216px);aspect-ratio:1;background:#000;border-radius:8px;overflow:hidden;box-shadow:0 0 0 1px #2c2c2e,0 20px 60px rgba(0,0,0,.6)}
+  .demo .d{position:absolute;width:33.333%;height:33.333%;padding:1px;transition:transform .32s cubic-bezier(.3,1.4,.5,1),opacity .3s}
+  .demo .d svg{width:100%;height:100%;display:block;border-radius:2px}
+  .demo .d.hit svg{box-shadow:inset 0 0 0 3px var(--acc)}
+  .demo .d.gone{opacity:0;transform:scale(.6)!important}
+  .demo .lab{position:absolute;left:0;right:0;top:42%;text-align:center;font-weight:900;color:var(--acc);font-size:20px;opacity:0;text-shadow:0 2px 10px #000;transition:opacity .2s;z-index:3}
+  .demo .lab.on{opacity:1}
+  .onbtx{max-width:310px;display:flex;flex-direction:column;gap:8px}
+  .onbtx .kicker{font-size:12px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--mut)}
+  .onbtx h4{margin:0 0 4px;font-size:32px;line-height:1;font-weight:900;letter-spacing:1px;color:var(--acc);
+    text-shadow:3px 3px 0 #7a6200,6px 6px 0 rgba(0,0,0,.6);font-family:"Arial Black",-apple-system,Helvetica,sans-serif}
+  .onbtx h4{display:flex;justify-content:center;gap:6px;font-size:22px}
+  .onbtx h4 span{background:var(--acc);color:#000;padding:6px 8px 5px;border-radius:3px;text-shadow:none;
+    box-shadow:inset -3px -3px 0 rgba(0,0,0,.25),inset 3px 3px 0 rgba(255,255,255,.35)}
+  .onbtx h4 span:nth-child(2){transform:translateY(5px)}
+  .onbtx p.rule{color:var(--txt);font-weight:800;font-size:16px;line-height:1.4}
+  .onbtx p{max-width:none}
+  .onbtx p b{color:var(--txt)}
+  .onbtx p.small{font-size:13px}
+  #go{margin-top:4px}
   .hint{position:absolute;bottom:80px;left:0;right:0;text-align:center;font-size:12px;color:var(--mut);letter-spacing:.5px;z-index:2}
 </style>
 </head>
@@ -251,23 +284,31 @@
 
   <!-- START -->
   <div class="ov" id="start">
-    <div class="sil"><svg viewBox="0 0 100 100"><use href="#silhouette"/></svg></div>
-    <div class="big">HEAD<em>LESS</em><span class="sub2">GAME</span></div>
-    <p>Build the profile. Legs, then torso, then a face-that-isn't-one on top. Add feet underneath for the full package.</p>
-    <div class="howto">
-      <div class="k acc"><svg viewBox="0 0 100 100"><use href="#silhouette"/></svg></div>
-      <div class="k" data-rot="torso"><svg viewBox="0 0 100 100" style="color:#d9a47f"><use href="#torso"/></svg></div>
-      <div class="k" data-rot="legs"><svg viewBox="0 0 100 100" style="color:#b57b57"><use href="#legs"/></svg></div>
-      <div class="k" data-rot="feet"><svg viewBox="0 0 100 100"><use href="#foot"/></svg></div>
+    <div class="sil hero"><svg viewBox="0 0 100 100"><use href="#silhouette"/></svg></div>
+    <div class="big white">HEADLESS<span class="sub2">GAME</span></div>
+    <p class="tag">A stacking game about faceless profiles. Legs, torso, a face-that-isn't-one: build the body the grid asks for, before everyone goes offline.</p>
+    <p class="tag2">The app is already a game. This one just admits it.</p>
+    <div class="menu">
+      <button class="btn" id="play">Try right now</button>
+      <form id="gate" hidden autocomplete="off">
+        <input id="pw" type="password" placeholder="Password" aria-label="Password" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <span class="err" id="pwErr"></span>
+        <button class="btn" type="submit">Enter</button>
+      </form>
+      <button class="btn ghostbtn" data-about>About &amp; artists</button>
     </div>
-    <p style="font-size:13px">Tap a column to move, tap again to drop. Two of a kind burn each other. Press and hold a profile to ⊘ block it.</p>
-    <button class="btn" id="play">Try right now</button>
-    <form id="gate" hidden autocomplete="off">
-      <input id="pw" type="password" placeholder="Password" aria-label="Password" autocapitalize="off" autocorrect="off" spellcheck="false">
-      <span class="err" id="pwErr"></span>
-      <button class="btn" type="submit">Enter</button>
-    </form>
-    <button class="btn ghostbtn" data-about style="height:44px;font-size:15px;margin-top:0">About &amp; artists</button>
+  </div>
+
+  <!-- ONBOARDING (after password) -->
+  <div class="ov" id="onb" hidden>
+    <div class="demo" id="demo" aria-hidden="true"></div>
+    <div class="onbtx">
+      <span class="kicker">How to play</span>
+      <h4><span>STACK</span><span>MATCH</span><span>REPEAT</span></h4>
+      <p class="rule">Stack legs, then a torso, then a headless top in one column. Add feet underneath for a full body.</p>
+      <p class="small">Tap a column to move · tap again to drop · two of a kind burn · hold a profile to ⊘ block it.</p>
+    </div>
+    <button class="btn" id="go">Start playing</button>
   </div>
 
   <!-- GAME OVER -->
@@ -376,6 +417,10 @@ const CREATORS={
   'silverandgelatin':{approved:false, credit:'photography · model <a href="https://instagram.com/patrick.bgz" target="_blank" rel="noopener">@patrick.bgz</a>'},
   'nikolaivoelcker': {approved:false, credit:'photography'},
   '_lorenzo7111':    {approved:false, credit:'photography'},
+  'thelawunda':      {approved:false, credit:'instagram.com/thelawunda'},
+  'hurricane_season2':{approved:false, credit:'instagram.com/hurricane_season2'},
+  'gayhorror666':    {approved:false, credit:'instagram.com/gayhorror666'},
+  'geelherme':       {approved:false, credit:'instagram.com/geelherme'},
   'twinks.in.art':   {approved:false, credit:'curating John Burton Harter, Albert Edelfelt, George Thomas Georgiadis'},
 };
 /* Square crops go in assets/tiles/creators/ named  <handle>_<part>_<n>.jpg
@@ -384,6 +429,24 @@ const CREATORS={
 const CREATOR_TILES=[
   '_lorenzo7111_torso_1',
   '_lorenzo7111_torso_2',
+  '_lorenzo7111_torso_3',
+  'gayhorror666_feet_1',
+  'gayhorror666_torso_1',
+  'gayhorror666_torso_2',
+  'gayhorror666_torso_3',
+  'gayhorror666_torso_4',
+  'geelherme_feet_1',
+  'geelherme_legs_1',
+  'geelherme_legs_2',
+  'geelherme_torso_1',
+  'geelherme_torso_2',
+  'geelherme_torso_3',
+  'geelherme_torso_4',
+  'hurricane_season2_legs_1',
+  'hurricane_season2_legs_2',
+  'hurricane_season2_legs_3',
+  'hurricane_season2_torso_1',
+  'hurricane_season2_torso_2',
   'jugodepapaya_legs_1',
   'jugodepapaya_torso_1',
   'jugodepapaya_torso_2',
@@ -392,6 +455,8 @@ const CREATOR_TILES=[
   'lukaszleja_torso_1',
   'lukaszleja_torso_2',
   'nikolaivoelcker_torso_1',
+  'nikolaivoelcker_torso_2',
+  'nikolaivoelcker_torso_3',
   'prettys_babes_feet_1',
   'prettys_babes_feet_2',
   'prettys_babes_feet_3',
@@ -399,8 +464,13 @@ const CREATOR_TILES=[
   'prettys_babes_legs_1',
   'prettys_babes_torso_1',
   'silverandgelatin_legs_1',
+  'silverandgelatin_torso_1',
   'studio_bara_legs_1',
   'studio_bara_torso_1',
+  'thelawunda_legs_1',
+  'thelawunda_legs_2',
+  'thelawunda_torso_1',
+  'thelawunda_torso_2',
   'twinks.in.art_legs_1',
   'twinks.in.art_torso_1',
   'twinks.in.art_torso_2',
@@ -416,7 +486,7 @@ const DECK=[];
 DECK.push({lvl:0,type:'head',svg:'silhouette'},{lvl:0,type:'feet',svg:'foot'});
 SKIN.forEach(c=>DECK.push({lvl:0,type:'torso',svg:'torso',skin:c},{lvl:0,type:'legs',svg:'legs',skin:c}));
 DECK.push({lvl:2,type:'head',svg:'silbar'},{lvl:3,type:'head',svg:'nopic'});
-const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111'];
+const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111','thelawunda','hurricane_season2','gayhorror666','geelherme'];
 CREATOR_TILES.forEach(f=>{ const p=f.split('_'); const part=p[p.length-2], by=p.slice(0,-2).join('_');
   if(!['torso','legs','feet'].includes(part)||!CREATORS[by]){console.warn('HEADLESS: bad creator tile name',f);return}
   if(!CREATORS[by].approved&&!SHOW_PENDING)return;
@@ -592,7 +662,7 @@ function closeAbout(){ $('#about').hidden=true; if(aboutFrom)$('#'+aboutFrom).hi
 function renderCredits(){
   const tilesBy={}; DECK.forEach(d=>{ if(d.by)(tilesBy[d.by]=tilesBy[d.by]||[]).push(d.img) });
   $('#credits').innerHTML=Object.entries(CREATORS).filter(([h,c])=>c.approved||SHOW_PENDING).map(([h,c])=>{
-    const av=tilesBy[h]?`<img src="${tilesBy[h][0]}" alt="">`:h.replace(/[^a-z]/gi,'')[0].toUpperCase();
+    const av=tilesBy[h]&&UNLOCKED?`<img src="${tilesBy[h][0]}" alt="">`:h.replace(/[^a-z]/gi,'')[0].toUpperCase();
     return `<div class="cr-card"><div class="av">${av}</div><div class="tx"><span class="h">@${h}</span><span class="c">${c.credit}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
       <a class="go" href="https://instagram.com/${h}" target="_blank" rel="noopener">See more ↗</a></div>`; }).join('');
 }
@@ -658,12 +728,31 @@ addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT')return; if(e.key==
 const PW_HASH=0x6df81fd0;
 const fnv=t=>{ let h=0x811c9dc5; for(const c of new TextEncoder().encode(t)){ h^=c; h=Math.imul(h,0x01000193)>>>0 } return h; };
 let UNLOCKED=false; try{UNLOCKED=localStorage.getItem('hl_ok')===String(PW_HASH)}catch(e){}
-$('#play').onclick=()=>{ if(UNLOCKED)return start(); $('#play').hidden=true; $('#gate').hidden=false; $('#pw').focus(); };
+$('#play').onclick=()=>{ audio(); if(UNLOCKED)return onboard(); $('#play').hidden=true; $('#gate').hidden=false; $('#pw').focus(); };
 $('#gate').addEventListener('submit',e=>{ e.preventDefault(); audio();
   if(fnv($('#pw').value.trim().toLowerCase())===PW_HASH){ UNLOCKED=true; try{localStorage.setItem('hl_ok',String(PW_HASH))}catch(e){}
-    $('#gate').hidden=true; $('#play').hidden=false; $('#pw').value=''; start(); }
+    $('#gate').hidden=true; $('#play').hidden=false; $('#pw').value=''; renderCredits(); onboard(); }
   else{ const g=$('#gate'); g.classList.remove('bad'); g.offsetHeight; g.classList.add('bad'); $('#pwErr').textContent='Wrong password'; buzz(60); tone(160,.2,'sawtooth',.06); } });
 $('#again').onclick=start;
+/* ---------- onboarding: 3x3 demo of the stacking, SVG only ---------- */
+let demoT=[];
+function onboard(){ $('#start').hidden=true; $('#onb').hidden=false; demo(); }
+$('#go').onclick=()=>{ demoT.forEach(clearTimeout); demoT=[]; $('#onb').hidden=true; start(); };
+function demo(){
+  demoT.forEach(clearTimeout); demoT=[]; const D=$('#demo'); D.innerHTML='<div class="lab" id="dlab"></div>';
+  const T=(ms,f)=>demoT.push(setTimeout(f,ms));
+  const sym={head:'silhouette',torso:'torso',legs:'legs',feet:'foot'}, skin={torso:'#d9a47f',legs:'#b57b57'};
+  const put=(type,col,row)=>{ const e=document.createElement('div'); e.className='d';
+    e.innerHTML=`<svg viewBox="0 0 100 100"${skin[type]?` style="color:${skin[type]}"`:''}><use href="#${sym[type]}"/></svg>`;
+    e.style.left=(col*33.333)+'%'; e.style.top=(row*33.333)+'%'; e.style.transform='translateY(-320%)'; D.appendChild(e);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>e.style.transform='none')); return e; };
+  // column 0 & 2 sit there as decoys; column 1 builds legs -> torso -> head and matches
+  let t=0; const seq=[['feet',0,2],['legs',2,2],['legs',1,2],['torso',1,1],['torso',0,1],['head',1,0]];
+  const els=[]; seq.forEach(([ty,c,r])=>{ T(t+=550,()=>{ els.push(put(ty,c,r)); try{tone(240,.05,'triangle',.04)}catch(e){} }); });
+  T(t+=450,()=>{ const col=els.filter((e,i)=>seq[i][1]===1); col.forEach(e=>e.classList.add('hit')); const l=$('#dlab'); l.textContent="IT'S A MATCH"; l.classList.add('on'); });
+  T(t+=900,()=>{ els.filter((e,i)=>seq[i][1]===1).forEach(e=>e.classList.add('gone')); $('#dlab').classList.remove('on'); });
+  T(t+=1200,demo);
+}
 $('#me').addEventListener('click',()=>{ audio(); if(S&&S.running)pause(); else if(S&&S.paused)resume(); else openAbout(); });
 $('#resume').onclick=resume; $('#restart').onclick=start;
 document.querySelectorAll('[data-about]').forEach(b=>b.onclick=openAbout);
@@ -674,17 +763,6 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden)pause(); }
 $('#meSvg').innerHTML='<use href="#silhouette"/>';
 $('#clock').textContent=new Date().toTimeString().slice(0,5)+' ➤';
 try{const b=localStorage.getItem('hl_best');if(b)setTxt('#best','Best '+b)}catch(e){}
-/* start screen: base SVG bodies, then after a few seconds torso/legs/feet rotate through the artists' tiles */
-(function howtoRotate(){
-  const slots=[...document.querySelectorAll('.howto [data-rot]')], step={};
-  const pool=t=>DECK.filter(d=>d.by&&d.type===t);
-  slots.forEach(k=>{ const p=pool(k.dataset.rot); p.sort(()=>Math.random()-.5); k._pool=p; step[k.dataset.rot]=0; });
-  function tick(i){ const k=slots[i%slots.length]; if(!k._pool.length)return;
-    const d=k._pool[step[k.dataset.rot]++%k._pool.length]; const im=new Image(); im.className='rot'; im.alt=''; im.src=d.img;
-    im.onload=()=>{ k.appendChild(im); requestAnimationFrame(()=>im.classList.add('on')); const old=[...k.querySelectorAll('img.rot')].slice(0,-1); setTimeout(()=>old.forEach(o=>o.remove()),500); }; }
-  let i=0; setTimeout(()=>{ slots.forEach((_,j)=>setTimeout(()=>tick(j),j*220)); i=slots.length;
-    setInterval(()=>{ if(!$('#start').hidden)tick(i++); },700); },2500);
-})();
 renderCredits(); lvlUI(false);
 fit(); layout();
 </script>
