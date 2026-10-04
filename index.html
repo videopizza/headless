@@ -4,12 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <meta name="theme-color" content="#000000">
-<meta name="description" content="A satirical stacking game about faceless profiles. Stack legs, torso and a silhouette to build a profile.">
-<meta property="og:title" content="HEADLESS GAME">
-<meta property="og:description" content="A satirical stacking game about faceless profiles.">
-<meta property="og:type" content="website">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23000'/><circle cx='50' cy='40' r='20' fill='%23FFCC00'/><path d='M10 100c0-22 18-32 40-32s40 10 40 32z' fill='%23FFCC00'/></svg>">
-<title>HEADLESS GAME</title>
+<title>HEADLESS</title>
+<!-- favicon = the headless tile (square) -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232b2b2d'/%3E%3Ccircle cx='50' cy='42' r='22' fill='%235a5a5e'/%3E%3Cpath d='M8 100c0-22 18-32 42-32s42 10 42 32z' fill='%235a5a5e'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <style>
   :root{
     --bg:#000; --phone:#0b0b0b; --card:#1c1c1e; --card2:#2c2c2e; --line:#3a3a3c;
@@ -149,6 +148,9 @@
   .ov .howto .k{width:56px;height:56px;padding:1px;border-radius:3px;overflow:hidden;background:var(--card2)}
   .ov .howto .k img,.ov .howto .k svg{width:100%;height:100%;object-fit:cover;display:block}
   .ov .howto .k.acc{outline:2px solid var(--acc)}
+  .ov .howto .k{position:relative}
+  .ov .howto .k img.rot{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);opacity:0;transition:opacity .45s}
+  .ov .howto .k img.rot.on{opacity:1}
   .ov .stats{display:flex;gap:26px;margin:4px 0}
   .ov .stats div{display:flex;flex-direction:column;gap:2px}
   .ov .stats b{font-size:30px;font-weight:900;letter-spacing:-1px}
@@ -156,11 +158,53 @@
   .ov .sil{width:120px;height:120px;border-radius:50%;background:var(--card2);overflow:hidden;margin-bottom:6px}
   .ov .sil svg{width:100%;height:100%}
   .ov .empty{width:52px;height:52px;color:#555}
+  /* ---- profile pic = pause button ---- */
+  #me{cursor:pointer}
+  #me:active{transform:scale(.92)}
+  #phone.paused #me{border-color:var(--mut)}
+  #phone.paused #me:after{background:var(--mut)}
+  /* creator-credited tiles */
+  .tile .lbl .by{color:#fff;font-weight:600}
+  .tile.cr .lbl{text-shadow:0 0 2px #000,0 1px 3px rgba(0,0,0,.9),0 0 10px rgba(0,0,0,.6)}
+  .tile.cr .in:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;box-shadow:inset 0 0 0 1.5px rgba(255,204,0,.55)}
+  .tile .in img{position:relative}
+  .tile .lbl{z-index:2}
+  /* level-up */
+  #lvlchip.up{animation:gain .5s 2}
+  /* ---- pause sheet ---- */
+  #pause .sil{width:96px;height:96px;filter:grayscale(1) brightness(.8)}
+  #pause .status{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:14px;font-weight:600}
+  #pause .status i{width:9px;height:9px;border-radius:50%;background:var(--mut);display:block}
+  .menu{display:flex;flex-direction:column;gap:10px;width:100%;max-width:290px;margin-top:6px}
+  .menu .btn{margin:0;justify-content:center;width:100%}
+  .btn.ghostbtn{background:var(--card);color:var(--txt)}
+  /* ---- about page ---- */
+  #about{justify-content:flex-start;align-items:stretch;text-align:left;padding:0;gap:0;background:rgba(0,0,0,.94)}
+  #about .bar{display:flex;align-items:center;gap:10px;padding:calc(54px + env(safe-area-inset-top,0px)) 16px 12px;border-bottom:1px solid #1c1c1e;flex:none}
+  #phone.bare #about .bar{padding-top:calc(14px + env(safe-area-inset-top,0px))}
+  #about .back{width:40px;height:40px;border-radius:20px;background:var(--card);border:0;color:var(--txt);font-size:20px;cursor:pointer;flex:none}
+  #about .bar b{font-size:17px}
+  #about .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;padding:18px 18px calc(40px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px;user-select:text;-webkit-user-select:text}
+  #about h2{margin:0;font-size:40px;font-weight:900;letter-spacing:-2px;line-height:.9}
+  #about h2 em{color:var(--acc);font-style:normal}
+  #about h3{margin:14px 0 0;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:var(--acc)}
+  #about p{max-width:none;color:#c7c7cc;font-size:15px;line-height:1.5}
+  #about .thanks{background:var(--acc);color:#000;border-radius:14px;padding:14px 16px;font-weight:700;font-size:15px;line-height:1.4}
+  .credits{display:flex;flex-direction:column;gap:10px}
+  .cr-card{background:var(--card);border-radius:14px;padding:14px;display:flex;gap:12px;align-items:center}
+  .cr-card .av{width:52px;height:52px;border-radius:50%;flex:none;overflow:hidden;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:var(--acc);border:2px solid var(--acc)}
+  .cr-card .av img{width:100%;height:100%;object-fit:cover}
+  .cr-card .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+  .cr-card .h{font-size:17px;font-weight:800;color:var(--txt);overflow-wrap:anywhere;line-height:1.15}
+  .cr-card .c{font-size:13px;color:var(--mut);line-height:1.35}
+  .cr-card .c a{color:var(--mut)}
+  .cr-card .go{flex:none;height:36px;padding:0 14px;border-radius:18px;background:var(--acc);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;text-decoration:none;white-space:nowrap}
+  .cr-card .pend{font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--danger)}
+  #about .small{font-size:12px;color:var(--mut)}
   .hint{position:absolute;bottom:80px;left:0;right:0;text-align:center;font-size:12px;color:var(--mut);letter-spacing:.5px;z-index:2}
 </style>
 </head>
 <body>
-
 <div id="stage">
 <div id="phone">
   <div id="notch"></div>
@@ -174,7 +218,7 @@
     <div class="chips">
       <div class="chip ic">⚌</div>
       <div class="chip ic">★</div>
-      <div class="chip on" id="lvlchip">Online</div>
+      <div class="chip on" id="lvlchip">New here</div>
       <div class="chip" id="nextchip"><span class="nt" id="next"></span> Right Now</div>
       <div class="chip" id="blocks">⊘ <span id="blocksN">3</span></div>
       <div class="chip" id="best">Best 0</div>
@@ -203,12 +247,13 @@
     <p>Build the profile. Legs, then torso, then a face-that-isn't-one on top. Add feet underneath for the full package.</p>
     <div class="howto">
       <div class="k acc"><svg viewBox="0 0 100 100"><use href="#silhouette"/></svg></div>
-      <div class="k"><svg viewBox="0 0 100 100" style="color:#d9a47f"><use href="#torso"/></svg></div>
-      <div class="k"><svg viewBox="0 0 100 100" style="color:#b57b57"><use href="#legs"/></svg></div>
-      <div class="k"><svg viewBox="0 0 100 100"><use href="#foot"/></svg></div>
+      <div class="k" data-rot="torso"><svg viewBox="0 0 100 100" style="color:#d9a47f"><use href="#torso"/></svg></div>
+      <div class="k" data-rot="legs"><svg viewBox="0 0 100 100" style="color:#b57b57"><use href="#legs"/></svg></div>
+      <div class="k" data-rot="feet"><svg viewBox="0 0 100 100"><use href="#foot"/></svg></div>
     </div>
     <p style="font-size:13px">Tap a column to move, tap again to drop. Two of a kind burn each other. Press and hold a profile to ⊘ block it.</p>
     <button class="btn" id="play">Try right now</button>
+    <button class="btn ghostbtn" data-about style="height:44px;font-size:15px;margin-top:0">About &amp; artists</button>
   </div>
 
   <!-- GAME OVER -->
@@ -223,6 +268,35 @@
     </div>
     <p id="verdict" style="color:var(--txt);font-weight:600"></p>
     <button class="btn" id="again">Try again right now</button>
+    <button class="btn ghostbtn" data-about style="height:44px;font-size:15px;margin-top:0">About &amp; artists</button>
+  </div>
+
+  <!-- PAUSE (tap your own headless profile pic) -->
+  <div class="ov" id="pause" hidden>
+    <div class="sil"><svg viewBox="0 0 100 100"><use href="#silhouette"/></svg></div>
+    <div class="status"><i></i> Away · your profile is hidden</div>
+    <div class="big" style="font-size:44px;letter-spacing:-2px">Paused</div>
+    <div class="menu">
+      <button class="btn" id="resume">Resume</button>
+      <button class="btn ghostbtn" id="restart">Restart</button>
+      <button class="btn ghostbtn" data-about>About &amp; artists</button>
+    </div>
+  </div>
+
+  <!-- ABOUT + CREDITS -->
+  <div class="ov" id="about" hidden>
+    <div class="bar"><button class="back" id="aboutBack" aria-label="Back">‹</button><b>About</b></div>
+    <div class="scroll">
+      <h2>HEAD<em>LESS</em></h2>
+      <p>A stacking game about faceless profiles. Legs, torso, a face-that-isn't-one: build the body the grid asks for, before everyone goes offline.</p>
+      <p>The app is already a game. This one just admits it.</p>
+      <h3>Bodies by</h3>
+      <div class="thanks">Thank you to the queer artists who lent their bodies of work to this game. Every credited tile carries their name. Go follow them, buy their work, book them.</div>
+      <div class="credits" id="credits"></div>
+      <h3>Game</h3>
+      <p>Design &amp; code: Tomato Cappelletti. Sound is synthesized in your browser. No tracking, no ads (yet).</p>
+      <p class="small">All artworks © their authors, used with permission. Artists: write to have your work credited differently or removed.</p>
+    </div>
   </div>
 </div>
 </div>
@@ -234,6 +308,21 @@
       <circle cx="50" cy="42" r="22" fill="#5a5a5e"/>
       <path d="M8 100c0-22 18-32 42-32s42 10 42 32z" fill="#5a5a5e"/>
     </symbol>
+    <!-- head looks unlock with play -->
+    <symbol id="silbar" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#232325"/>
+      <circle cx="50" cy="42" r="22" fill="#6a6a6e"/>
+      <path d="M8 100c0-22 18-32 42-32s42 10 42 32z" fill="#6a6a6e"/>
+      <rect x="22" y="34" width="56" height="12" fill="#000"/>
+    </symbol>
+    <symbol id="nopic" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#1c1c1e"/>
+      <g fill="none" stroke="#5a5a5e" stroke-width="4" stroke-linejoin="round" transform="translate(0 -12)">
+        <path d="M30 38h10l5-7h10l5 7h10v28H30z"/><circle cx="50" cy="51" r="8"/><path d="M24 74L76 26"/>
+      </g>
+      <text x="50" y="72" text-anchor="middle" font-family="-apple-system,Helvetica,Arial" font-size="10" font-weight="700" fill="#5a5a5e" letter-spacing="1">NO FACE PIC</text>
+    </symbol>
+    <!-- level-0 drawn bodies (recoloured per skin tone) -->
     <symbol id="torso" viewBox="0 0 100 100">
       <rect width="100" height="100" fill="#1f1f21"/>
       <path d="M22 0h56l4 26c8 4 12 14 12 30v44H6V56c0-16 4-26 12-30z" fill="currentColor"/>
@@ -260,7 +349,75 @@
 <script>
 /* ================= HEADLESS v0 — core mechanic ================= */
 const COLS=3; let ROWS=5, OX=0, GH=0;
+/* ================= CREATORS =================
+   Who lent their work. `approved` = written OK received.
+   Before publishing: set SHOW_PENDING=false (pending artists are hidden from About and their tiles are skipped). */
+const SHOW_PENDING=true;
+const CREATORS={
+  'prettys_babes':   {approved:true,  credit:'ink drawings'},
+  'jugodepapaya':    {approved:false, credit:'drawings'},
+  'studio_bara':     {approved:false, credit:'colour pencil drawings'},
+  'lukaszleja':      {approved:false, credit:'oil paintings'},
+  'yannsheep':       {approved:false, credit:'paintings'},
+  'silverandgelatin':{approved:false, credit:'photography · model <a href="https://instagram.com/patrick.bgz" target="_blank" rel="noopener">@patrick.bgz</a>'},
+  'nikolaivoelcker': {approved:false, credit:'photography'},
+  '_lorenzo7111':    {approved:false, credit:'photography'},
+  'twinks.in.art':   {approved:false, credit:'curating John Burton Harter, Albert Edelfelt, George Thomas Georgiadis'},
+};
+/* Square crops go in assets/tiles/creators/ named  <handle>_<part>_<n>.jpg
+   part = torso | legs | feet   (heads stay headless: always the silhouette)
+   Then list the file names here, without extension, e.g. 'jugodepapaya_torso_1'. */
+const CREATOR_TILES=[
+  '_lorenzo7111_torso_1',
+  '_lorenzo7111_torso_2',
+  'jugodepapaya_legs_1',
+  'jugodepapaya_torso_1',
+  'jugodepapaya_torso_2',
+  'jugodepapaya_torso_3',
+  'lukaszleja_feet_1',
+  'lukaszleja_feet_2',
+  'lukaszleja_torso_1',
+  'lukaszleja_torso_2',
+  'nikolaivoelcker_torso_1',
+  'prettys_babes_feet_1',
+  'prettys_babes_feet_2',
+  'prettys_babes_feet_3',
+  'prettys_babes_feet_4',
+  'prettys_babes_feet_5',
+  'prettys_babes_legs_1',
+  'prettys_babes_torso_1',
+  'silverandgelatin_legs_1',
+  'studio_bara_legs_1',
+  'studio_bara_torso_1',
+  'twinks.in.art_legs_1',
+  'twinks.in.art_torso_1',
+  'twinks.in.art_torso_2',
+  'yannsheep_legs_1'
+];
+
+/* ================= DECK: tile looks evolve the more you play =================
+   Level = lifetime profiles built (saved in this browser). Each level adds a new look,
+   the newest looks are the most likely, the oldest fade out. */
+const LEVELS=[{at:0,name:'New here'},{at:4,name:'Online'},{at:12,name:'Looking'},{at:30,name:'24/7'}];
 const SKIN=['#f1d3b8','#d9a47f','#b57b57','#8a5a3c','#5c3a26'];
+const DECK=[];
+DECK.push({lvl:0,type:'head',svg:'silhouette'},{lvl:0,type:'feet',svg:'foot'});
+SKIN.forEach(c=>DECK.push({lvl:0,type:'torso',svg:'torso',skin:c},{lvl:0,type:'legs',svg:'legs',skin:c}));
+DECK.push({lvl:2,type:'head',svg:'silbar'},{lvl:3,type:'head',svg:'nopic'});
+const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111'];
+CREATOR_TILES.forEach(f=>{ const p=f.split('_'); const part=p[p.length-2], by=p.slice(0,-2).join('_');
+  if(!['torso','legs','feet'].includes(part)||!CREATORS[by]){console.warn('HEADLESS: bad creator tile name',f);return}
+  if(!CREATORS[by].approved&&!SHOW_PENDING)return;
+  DECK.push({lvl:PHOTO.includes(by)?1:0,type:part,img:`assets/tiles/creators/${f}.jpg`,by}); });
+let LIFE=0; try{LIFE=+localStorage.getItem('hl_life')||0}catch(e){}
+const FORCE_LVL=new URLSearchParams(location.search).get('lvl');   // ?lvl=2 to preview a level
+function level(){ if(FORCE_LVL!==null)return Math.max(0,Math.min(LEVELS.length-1,+FORCE_LVL||0)); let l=0; LEVELS.forEach((L,i)=>{if(LIFE>=L.at)l=i}); return l; }
+function pickLook(type){
+  const L=level(); const pool=DECK.filter(d=>d.type===type&&d.lvl<=L&&!(L>=3&&d.svg&&d.lvl===0&&DECK.some(x=>x.type===type&&!x.svg&&x.lvl<=L)));
+  const w=pool.map(d=>d.lvl===L?3:d.lvl===L-1?1.5:.5); let r=Math.random()*w.reduce((a,b)=>a+b,0);
+  for(let i=0;i<pool.length;i++){ r-=w[i]; if(r<=0)return pool[i]; } return pool[pool.length-1];
+}
+const short=h=>h.length>11?h.slice(0,10)+'…':h;
 const NAMES=['','','','','Any chill?','Hung','MAT','Richie','6','André','Kinky','discreet','vers','now?','🌊','🐐','visiting','⬇️','200m','gym','looking','host'];
 const PT={match:300, super:1000, drop:2};
 
@@ -288,19 +445,25 @@ const buzz=p=>{ try{navigator.vibrate&&navigator.vibrate(p)}catch(e){} };
 
 /* ---------- state ---------- */
 let S=null, raf=null, last=0;
-function fresh(){ return {stack:Array.from({length:COLS},()=>[]), fall:null, next:null, score:0, blocks:3, combo:0, matches:0, supers:0, speed:110, running:false, busy:false, tiles:0}; }
+function fresh(){ return {stack:Array.from({length:COLS},()=>[]), fall:null, next:null, score:0, blocks:3, combo:0, matches:0, supers:0, speed:110, running:false, paused:false, busy:false, tiles:0, sinceHead:0}; }
 
-function pickType(){ const r=Math.random(); return r<.30?'head':r<.60?'torso':r<.88?'legs':'feet'; }
-function mkTile(type){ const t={type,id:++S.tiles,name:NAMES[Math.random()*NAMES.length|0],star:Math.random()<.35,on:Math.random()<.4,el:null};
-  t.skin=SKIN[Math.random()*SKIN.length|0]; return t; }
+/* the headless tile is the rare one: ~20%, rarer as you level up, with a pity timer so a run never starves */
+function pickType(){
+  const L=level(), ph=Math.max(.15,.21-.02*L);
+  let type; if(S.sinceHead>=6) type='head';
+  else { const r=Math.random(), rest=(1-ph); type = r<ph?'head': r<ph+rest*.38?'torso': r<ph+rest*.76?'legs':'feet'; }
+  S.sinceHead = type==='head'?0:S.sinceHead+1; return type; }
+function mkTile(type){ const look=pickLook(type);
+  const t={type,look,id:++S.tiles,name:look.by?'@'+short(look.by):NAMES[Math.random()*NAMES.length|0],star:!look.by&&Math.random()<.35,on:Math.random()<.4,el:null};
+  return t; }
+function lookHTML(l,cls){ return l.img?`<img src="${l.img}" alt="" draggable="false">`
+  : `<svg ${cls?'class="fill" ':''}viewBox="0 0 100 100"${l.skin?` style="color:${l.skin}"`:''}><use href="#${l.svg}"/></svg>`; }
 function tileHTML(t){
-  let inner = t.type==='head' ? '<svg class="fill" viewBox="0 0 100 100"><use href="#silhouette"/></svg>'
-    : t.type==='feet' ? '<svg class="fill" viewBox="0 0 100 100"><use href="#foot"/></svg>'
-    : `<svg class="fill" viewBox="0 0 100 100" style="color:${t.skin}"><use href="#${t.type}"/></svg>`;
-  const lbl = `<div class="lbl">${t.on?'<span class="dot"></span>':''}${t.star?'<span class="star">★</span>':''}<span>${t.name}</span></div>`;
+  const inner=lookHTML(t.look,true);
+  const lbl = `<div class="lbl">${t.on?'<span class="dot"></span>':''}${t.star?'<span class="star">★</span>':''}<span${t.look.by?' class="by"':''}>${t.name}</span></div>`;
   return `<div class="in">${inner}${lbl}</div>`;
 }
-function mount(t){ const el=document.createElement('div'); el.className='tile '+t.type; el.innerHTML=tileHTML(t); el.dataset.id=t.id; grid.appendChild(el); t.el=el; return el; }
+function mount(t){ const el=document.createElement('div'); el.className='tile '+t.type+(t.look.by?' cr':''); el.innerHTML=tileHTML(t); el.dataset.id=t.id; grid.appendChild(el); t.el=el; return el; }
 function place(t,col,y,instant){ if(instant){t.el.style.transition='none'} t.el.style.transform=`translate(${OX+col*CW}px,${y}px)`; if(instant){t.el.offsetHeight;t.el.style.transition=''} }
 function rowY(rowFromBottom){ return GH-(rowFromBottom+1)*RH; }
 
@@ -341,7 +504,7 @@ function spawn(){
   mount(t); t.el.classList.add('falling'); place(t,col,-RH,true);
   S.fall={t,col,y:-RH,hard:false}; ghost();
 }
-function renderNext(){ const n=S.next; $('#next').innerHTML = n.type==='head'?'<svg viewBox="0 0 100 100"><use href="#silhouette"/></svg>':n.type==='feet'?'<svg viewBox="0 0 100 100"><use href="#foot"/></svg>':`<svg viewBox="0 0 100 100" style="color:${n.skin}"><use href="#${n.type}"/></svg>`; }
+function renderNext(){ $('#next').innerHTML=lookHTML(S.next.look); }
 function landY(col){ return rowY(S.stack[col].length); }
 function move(d){ if(!S.fall||S.busy)return; const c=S.fall.col+d; if(c<0||c>=COLS)return; if(rowY(S.stack[c].length)<S.fall.y-2)return; S.fall.col=c; place(S.fall.t,c,S.fall.y); ghost(); SFX.move(); }
 function moveTo(c){ if(!S.fall||S.busy)return; if(c===S.fall.col){hardDrop();return} if(rowY(S.stack[c].length)<S.fall.y-2){buzz(30);return} S.fall.col=c; place(S.fall.t,c,S.fall.y); ghost(); SFX.move(); }
@@ -379,7 +542,7 @@ function resolve(col){
 function clear(col,count,sup){
   S.busy=true; const st=S.stack[col]; const gone=st.splice(st.length-count,count);
   S.combo++; const mult=S.combo; const base=sup?PT.super:PT.match; const pts=base*mult;
-  S.score+=pts; if(sup){S.supers++; S.blocks++; $('#blocks').classList.add('gain'); setTimeout(()=>$('#blocks').classList.remove('gain'),450)} else S.matches++;
+  S.score+=pts; progress(); if(sup){S.supers++; S.blocks++; $('#blocks').classList.add('gain'); setTimeout(()=>$('#blocks').classList.remove('gain'),450)} else S.matches++;
   gone.forEach((t,i)=>{ t.el.classList.add('clear'); setTimeout(()=>t.el.remove(),480); });
   flame(col); popup(col, `+${pts}`, sup?'FULL BODY':'IT\'S A MATCH', sup);
   if(sup){SFX.super(); buzz([30,40,60]); phone.classList.add('shake'); $('#flash').classList.add('on'); setTimeout(()=>{phone.classList.remove('shake');$('#flash').classList.remove('on')},400); toast(['Chatted just now','Tapped you 🔥','Sent an album','338 m away · Right Now'][Math.random()*4|0]);}
@@ -403,13 +566,34 @@ function flame(col){ const e=document.createElement('div'); e.className='flame';
 function popup(col,txt,sub,big){ const e=document.createElement('div'); e.className='pop'+(big?' big':'')+(txt==='+30'?' sm':''); e.innerHTML=txt+`<small>${sub}</small>`; e.style.top=(RH*2)+'px'; grid.appendChild(e); setTimeout(()=>e.remove(),1000); }
 function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.remove('show'); t.offsetHeight; t.classList.add('show'); }
 
+/* ---------- progression ---------- */
+function lvlUI(bump){ const c=$('#lvlchip'); c.textContent=LEVELS[level()].name; if(bump){c.classList.remove('up');c.offsetHeight;c.classList.add('up')} }
+function progress(){ const before=level(); LIFE++; try{localStorage.setItem('hl_life',LIFE)}catch(e){}
+  if(level()>before){ lvlUI(true); setTimeout(()=>toast(['New bodies nearby 👀','Fresh faces. Well, not faces.','You\'re '+LEVELS[level()].name+' now'][Math.random()*3|0]),700); } }
+
+/* ---------- pause / about ---------- */
+let aboutFrom=null;
+function pause(){ if(!S||!S.running||S.paused)return; S.paused=true; S.running=false; clearHold(); phone.classList.add('paused'); $('#pause').hidden=false; tone(500,.08,'sine',.06); }
+function resume(){ if(!S||!S.paused)return; S.paused=false; S.running=true; last=performance.now(); phone.classList.remove('paused'); $('#pause').hidden=true; $('#about').hidden=true; }
+function openAbout(){ if(S&&S.running)pause(); aboutFrom=['pause','start','over'].find(id=>!$('#'+id).hidden)||null; if(aboutFrom)$('#'+aboutFrom).hidden=true; $('#about').hidden=false; $('#about .scroll').scrollTop=0; }
+function closeAbout(){ $('#about').hidden=true; if(aboutFrom)$('#'+aboutFrom).hidden=false; aboutFrom=null; }
+function renderCredits(){
+  const tilesBy={}; DECK.forEach(d=>{ if(d.by)(tilesBy[d.by]=tilesBy[d.by]||[]).push(d.img) });
+  $('#credits').innerHTML=Object.entries(CREATORS).filter(([h,c])=>c.approved||SHOW_PENDING).map(([h,c])=>{
+    const av=tilesBy[h]?`<img src="${tilesBy[h][0]}" alt="">`:h.replace(/[^a-z]/gi,'')[0].toUpperCase();
+    return `<div class="cr-card"><div class="av">${av}</div><div class="tx"><span class="h">@${h}</span><span class="c">${c.credit}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
+      <a class="go" href="https://instagram.com/${h}" target="_blank" rel="noopener">See more ↗</a></div>`; }).join('');
+}
+
 /* ---------- game flow ---------- */
 function start(){
+  phone.classList.remove('paused'); $('#pause').hidden=true; $('#about').hidden=true; aboutFrom=null;
   audio(); grid.classList.remove('warn'); $('#gfog').classList.remove('on'); grid.querySelectorAll('.tile:not(.ghost)').forEach(e=>e.remove()); S=fresh(); layout(); scoreUI(); comboUI();
   $('#start').hidden=true; $('#over').hidden=true; 
   S.running=true; last=performance.now(); spawn(); if(!raf)raf=requestAnimationFrame(loop);
 }
 function gameOver(){
+  S.paused=false; phone.classList.remove('paused'); $('#pause').hidden=true;
   S.running=false; S.busy=true; if(S.fall){S.fall.t.el.remove();S.fall=null} ghost();
   grid.classList.remove('warn'); comboUI();
   SFX.over(); buzz([80,40,120]);
@@ -456,15 +640,32 @@ grid.addEventListener('pointerup',e=>{
   const r=grid.getBoundingClientRect(); const col=Math.floor((e.clientX-r.left-OX)/CW);
   moveTo(Math.max(0,Math.min(COLS-1,col)));
 });
-addEventListener('keydown',e=>{ if(!S||!S.running)return; if(e.key==='ArrowLeft')move(-1); else if(e.key==='ArrowRight')move(1); else if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();hardDrop()} });
+addEventListener('keydown',e=>{ if(e.key==='Escape'||e.key==='p'){ if(!$('#about').hidden)closeAbout(); else if(S&&S.paused)resume(); else pause(); return }
+  if(!S||!S.running)return; if(e.key==='ArrowLeft')move(-1); else if(e.key==='ArrowRight')move(1); else if(e.key==='ArrowDown'||e.key===' '){e.preventDefault();hardDrop()} });
 $('#play').onclick=start; $('#again').onclick=start;
+$('#me').addEventListener('click',()=>{ audio(); if(S&&S.running)pause(); else if(S&&S.paused)resume(); else openAbout(); });
+$('#resume').onclick=resume; $('#restart').onclick=start;
+document.querySelectorAll('[data-about]').forEach(b=>b.onclick=openAbout);
+$('#aboutBack').onclick=closeAbout;
+document.addEventListener('visibilitychange',()=>{ if(document.hidden)pause(); });
 
 /* ---------- boot ---------- */
 $('#meSvg').innerHTML='<use href="#silhouette"/>';
 $('#clock').textContent=new Date().toTimeString().slice(0,5)+' ➤';
 try{const b=localStorage.getItem('hl_best');if(b)setTxt('#best','Best '+b)}catch(e){}
+/* start screen: base SVG bodies, then after a few seconds torso/legs/feet rotate through the artists' tiles */
+(function howtoRotate(){
+  const slots=[...document.querySelectorAll('.howto [data-rot]')], step={};
+  const pool=t=>DECK.filter(d=>d.by&&d.type===t);
+  slots.forEach(k=>{ const p=pool(k.dataset.rot); p.sort(()=>Math.random()-.5); k._pool=p; step[k.dataset.rot]=0; });
+  function tick(i){ const k=slots[i%slots.length]; if(!k._pool.length)return;
+    const d=k._pool[step[k.dataset.rot]++%k._pool.length]; const im=new Image(); im.className='rot'; im.alt=''; im.src=d.img;
+    im.onload=()=>{ k.appendChild(im); requestAnimationFrame(()=>im.classList.add('on')); const old=[...k.querySelectorAll('img.rot')].slice(0,-1); setTimeout(()=>old.forEach(o=>o.remove()),500); }; }
+  let i=0; setTimeout(()=>{ slots.forEach((_,j)=>setTimeout(()=>tick(j),j*220)); i=slots.length;
+    setInterval(()=>{ if(!$('#start').hidden)tick(i++); },700); },2500);
+})();
+renderCredits(); lvlUI(false);
 fit(); layout();
 </script>
-
 </body>
 </html>
