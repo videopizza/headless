@@ -501,7 +501,12 @@ function pickLook(type){
   const pool=DECK.filter(d=>d.type===type&&d.lvl<=L);
   const svg=pool.filter(d=>d.svg), art=pool.filter(d=>!d.svg&&n>=(PHOTO.includes(d.by)?PHOTO_FROM:ART_FROM));
   const p=Math.min(ART_MAX,Math.max(0,(n-ART_FROM+1)/ART_RAMP*ART_MAX));
-  if(art.length&&Math.random()<p) return art[Math.random()*art.length|0];
+  if(art.length&&Math.random()<p){
+    // shuffle-bag: no artwork repeats until every artwork of this body part has been shown once
+    const seen=S?(S.seen=S.seen||new Set()):new Set();
+    let fresh=art.filter(d=>!seen.has(d.img));
+    if(!fresh.length){ art.forEach(d=>seen.delete(d.img)); fresh=art; }
+    const d=fresh[Math.random()*fresh.length|0]; seen.add(d.img); return d; }
   const w=svg.map(d=>d.lvl===L?3:d.lvl===L-1?1.5:.5); let r=Math.random()*w.reduce((a,b)=>a+b,0);
   for(let i=0;i<svg.length;i++){ r-=w[i]; if(r<=0)return svg[i]; } return svg[svg.length-1];
 }
@@ -533,7 +538,7 @@ const buzz=p=>{ try{navigator.vibrate&&navigator.vibrate(p)}catch(e){} };
 
 /* ---------- state ---------- */
 let S=null, raf=null, last=0;
-function fresh(){ return {stack:Array.from({length:COLS},()=>[]), fall:null, next:null, score:0, blocks:3, combo:0, matches:0, supers:0, speed:110, running:false, paused:false, busy:false, tiles:0, sinceHead:0}; }
+function fresh(){ return {stack:Array.from({length:COLS},()=>[]), fall:null, next:null, score:0, blocks:3, combo:0, matches:0, supers:0, speed:110, running:false, paused:false, busy:false, tiles:0, sinceHead:0, seen:new Set()}; }
 
 /* the headless tile is the rare one: ~20%, rarer as you level up, with a pity timer so a run never starves */
 function pickType(){
