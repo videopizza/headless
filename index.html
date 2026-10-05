@@ -200,7 +200,18 @@
   .cr-card .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
   .cr-card .h{font-size:16px;font-weight:800;color:var(--txt);overflow-wrap:anywhere;line-height:1.15}
   .cr-card .go{flex:none;height:34px;padding:0 13px;border-radius:17px;background:var(--acc);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;text-decoration:none;white-space:nowrap}
-  .cr-card .pend{font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#ff9f0a}
+  .cr-card{flex-wrap:wrap}
+  .cr-card .av img.pic{opacity:1;z-index:1}
+  .cr-card .more{align-self:flex-start;margin-top:4px;padding:0;background:none;border:0;color:var(--mut);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+  .cr-card .more::after{content:' ▾';display:inline-block;transition:transform .2s}
+  .cr-card.open .more::after{transform:rotate(180deg)}
+  .cr-card .grid{display:none;flex-basis:100%;grid-template-columns:repeat(3,1fr);gap:6px}
+  .cr-card.open .grid{display:grid}
+  .cr-card .grid a{display:block;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--card2)}
+  .cr-card .grid img{width:100%;height:100%;object-fit:cover;display:block}
+  .cr-card .pend{margin-top:4px;font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#ff9f0a;animation:pendPulse 1.8s ease-in-out infinite}
+  @keyframes pendPulse{50%{opacity:.35}}
+  @media (prefers-reduced-motion:reduce){.cr-card .pend{animation:none}}
   #about .small{font-size:12px;color:var(--mut)}
   /* ---- password gate ---- */
   #gate{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:290px}
@@ -435,6 +446,7 @@ const CREATORS={
   'sasha.from.paris':{approved:false, credit:'oil paintings'},
   'agostovs':        {approved:false, credit:'3D character design'},
   'bruterdam':       {approved:false, credit:'3D renders'},
+  'lorenzosuited':   {approved:false, credit:'AI images'},
   'twinks.in.art':   {approved:false, credit:'curating John Burton Harter, Albert Edelfelt, George Thomas Georgiadis'},
 };
 /* Square crops go in assets/tiles/creators/ named  <handle>_<part>_<n>.jpg
@@ -512,6 +524,12 @@ const CREATOR_TILES=[
   'bruterdam_torso_2',
   'bruterdam_torso_3',
   'bruterdam_torso_4',
+  'lorenzosuited_feet_1',
+  'lorenzosuited_feet_2',
+  'lorenzosuited_feet_3',
+  'lorenzosuited_feet_4',
+  'lorenzosuited_legs_1',
+  'lorenzosuited_legs_2',
 ];
 
 /* ================= DECK: tile looks evolve the more you play =================
@@ -710,18 +728,25 @@ function openAbout(){ if(S&&S.running)pause(); aboutFrom=['pause','start','over'
 function closeAbout(){ rotateCredits(false); $('#about').hidden=true; if(aboutFrom)$('#'+aboutFrom).hidden=false; aboutFrom=null; }
 function renderCredits(){
   const tilesBy={}; DECK.forEach(d=>{ if(d.by)(tilesBy[d.by]=tilesBy[d.by]||[]).push(d.img) });
-  $('#credits').innerHTML=Object.entries(CREATORS).filter(([h,c])=>c.approved||SHOW_PENDING).map(([h,c])=>{
-    const imgs=(UNLOCKED&&tilesBy[h])||[];
+  /* approved first, otherwise keep CREATORS order */
+  const list=Object.entries(CREATORS).filter(([h,c])=>c.approved||SHOW_PENDING).sort((a,b)=>b[1].approved-a[1].approved);
+  $('#credits').innerHTML=list.map(([h,c])=>{
+    const imgs=(UNLOCKED&&tilesBy[h])||[], url=`https://instagram.com/${h}`;
+    /* profile pic: drop assets/avatars/<handle>.jpg in, otherwise the card cycles their tiles */
+    const pic=`<img class="pic" src="assets/avatars/${h}.jpg" alt="" onerror="this.remove()">`;
     const art=imgs.length? imgs.map((src,i)=>`<img ${i===0?`src="${src}" class="on"`:`data-src="${src}"`} alt="" loading="lazy">`).join('') : h.replace(/[^a-z]/gi,'')[0].toUpperCase();
-    return `<div class="cr-card"><div class="av">${art}</div><div class="tx"><span class="h">@${h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
-      <a class="go" href="https://instagram.com/${h}" target="_blank" rel="noopener">See more ↗</a></div>`; }).join('');
+    const mine=tilesBy[h]||[]; /* approved artists said yes: their tiles show even before the password */
+    const grid=c.approved&&mine.length? mine.slice(0,6).map(src=>`<a href="${url}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy"></a>`).join('') : '';
+    return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">@${h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}${grid?`<button class="more" type="button">Show artworks</button>`:''}</div>
+      <a class="go" href="${url}" target="_blank" rel="noopener">See more ↗</a>${grid?`<div class="grid">${grid}</div>`:''}</div>`; }).join('');
+  $('#credits').querySelectorAll('.more').forEach(b=>b.onclick=()=>b.closest('.cr-card').classList.toggle('open'));
 }
 /* each card cycles its own artwork: slow, each on its own clock, only while About is open */
 let credT=[];
 function rotateCredits(on){
   credT.forEach(clearTimeout); credT=[]; if(!on)return;
   document.querySelectorAll('#credits .av').forEach(art=>{
-    const imgs=[...art.querySelectorAll('img')]; if(imgs.length<2)return;
+    const imgs=[...art.querySelectorAll('img:not(.pic)')]; if(imgs.length<2||art.querySelector('.pic'))return;
     let k=0;
     const step=()=>{ const next=imgs[(k+1)%imgs.length]; if(next.dataset.src){next.src=next.dataset.src; delete next.dataset.src}
       imgs[k].classList.remove('on'); k=(k+1)%imgs.length; imgs[k].classList.add('on');
