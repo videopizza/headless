@@ -202,11 +202,7 @@
   .cr-card .go{flex:none;height:34px;padding:0 13px;border-radius:17px;background:var(--acc);color:#000;font-weight:800;font-size:13px;display:flex;align-items:center;text-decoration:none;white-space:nowrap}
   .cr-card{flex-wrap:wrap}
   .cr-card .av img.pic{opacity:1;z-index:1}
-  .cr-card .more{align-self:flex-start;margin-top:4px;padding:0;background:none;border:0;color:var(--mut);font:inherit;font-size:12px;font-weight:600;cursor:pointer}
-  .cr-card .more::after{content:' ▾';display:inline-block;transition:transform .2s}
-  .cr-card.open .more::after{transform:rotate(180deg)}
-  .cr-card .grid{display:none;flex-basis:100%;grid-template-columns:repeat(3,1fr);gap:6px}
-  .cr-card.open .grid{display:grid}
+  .cr-card .grid{display:grid;margin-top:2px;flex-basis:100%;grid-template-columns:repeat(3,1fr);gap:6px}
   .cr-card .grid a{display:block;aspect-ratio:1;border-radius:8px;overflow:hidden;background:var(--card2)}
   .cr-card .grid img{width:100%;height:100%;object-fit:cover;display:block}
   .cr-card .pend{margin-top:4px;font-size:8.5px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:#ff9f0a;animation:pendPulse 1.8s ease-in-out infinite}
@@ -429,13 +425,13 @@ const COLS=3; let ROWS=5, OX=0, GH=0;
    Before publishing: set SHOW_PENDING=false (pending artists are hidden from About and their tiles are skipped). */
 const SHOW_PENDING=true;
 const CREATORS={
+  'nikolaivoelcker': {approved:true,  credit:'photography'},
   'prettys_babes':   {approved:true,  credit:'ink drawings'},
   'jugodepapaya':    {approved:false, credit:'drawings'},
   'studio_bara':     {approved:false, credit:'colour pencil drawings'},
   'lukaszleja':      {approved:false, credit:'oil paintings'},
   'yannsheep':       {approved:false, credit:'paintings'},
   'silverandgelatin':{approved:false, credit:'photography · model <a href="https://instagram.com/patrick.bgz" target="_blank" rel="noopener">@patrick.bgz</a>'},
-  'nikolaivoelcker': {approved:true,  credit:'photography'},
   '_lorenzo7111':    {approved:false, credit:'photography'},
   'thelawunda':      {approved:false, credit:'instagram.com/thelawunda'},
   'hurricane_season2':{approved:false, credit:'instagram.com/hurricane_season2'},
@@ -737,9 +733,8 @@ function renderCredits(){
     const art=imgs.length? imgs.map((src,i)=>`<img ${i===0?`src="${src}" class="on"`:`data-src="${src}"`} alt="" loading="lazy">`).join('') : h.replace(/[^a-z]/gi,'')[0].toUpperCase();
     const mine=tilesBy[h]||[]; /* approved artists said yes: their tiles show even before the password */
     const grid=c.approved&&mine.length? mine.slice(0,6).map(src=>`<a href="${url}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy"></a>`).join('') : '';
-    return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">@${h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}${grid?`<button class="more" type="button">Show artworks</button>`:''}</div>
+    return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">@${h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
       <a class="go" href="${url}" target="_blank" rel="noopener">See more ↗</a>${grid?`<div class="grid">${grid}</div>`:''}</div>`; }).join('');
-  $('#credits').querySelectorAll('.more').forEach(b=>b.onclick=()=>b.closest('.cr-card').classList.toggle('open'));
 }
 /* each card cycles its own artwork: slow, each on its own clock, only while About is open */
 let credT=[];
