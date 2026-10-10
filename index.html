@@ -444,7 +444,7 @@ const CREATORS={
   'florianfuckingschwab': {approved:true,  credit:'linocuts, watercolour & graphite'},
   'donnymeloche':    {approved:true,  credit:'digital illustration'},
   '_n.ivy':          {approved:true,  credit:'acrylic & oil pastel'},
-  'agostovs':        {approved:true,  credit:'3D character design'},
+  'agostovs':        {approved:true,  credit:'3D character design', url:'https://agostinavallesaggio.com/'},
   'studio_bara':     {approved:false, credit:'colour pencil drawings'},
   'lukaszleja':      {approved:false, credit:'oil paintings'},
   'yannsheep':       {approved:false, credit:'paintings'},
@@ -790,7 +790,7 @@ function renderCredits(){
   /* approved first, otherwise keep CREATORS order */
   const list=Object.entries(CREATORS).filter(([h,c])=>c.approved||SHOW_PENDING).sort((a,b)=>b[1].approved-a[1].approved);
   $('#credits').innerHTML=list.map(([h,c])=>{
-    const imgs=(UNLOCKED&&tilesBy[h])||[], url=`https://instagram.com/${h}`;
+    const imgs=(UNLOCKED&&tilesBy[h])||[], url=c.url||`https://instagram.com/${h}`;
     /* profile pic: drop assets/avatars/<handle>.jpg in, otherwise the card cycles their tiles */
     const pic=`<img class="pic" src="assets/avatars/${h}.jpg" alt="" onerror="this.remove()">`;
     const art=imgs.length? imgs.map((src,i)=>`<img ${i===0?`src="${src}" class="on"`:`data-src="${src}"`} alt="" loading="lazy">`).join('') : h.replace(/[^a-z]/gi,'')[0].toUpperCase();
