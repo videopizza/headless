@@ -432,8 +432,10 @@
 const COLS=3; let ROWS=5, OX=0, GH=0;
 /* ================= CREATORS =================
    Who lent their work. `approved` = written OK received.
-   Before publishing: set SHOW_PENDING=false (pending artists are hidden from About and their tiles are skipped). */
-const SHOW_PENDING=false;
+   Tiles come ONLY from approved artists: that is enforced in the DECK loop, not by a flag.
+   SHOW_PENDING only decides whether artists we're still asking appear in the About credits,
+   with their avatar, their link and a "permission pending" label, but no artwork. */
+const SHOW_PENDING=true;
 const CREATORS={
   'nikolaivoelcker': {approved:true,  credit:'photography'},
   'prettys_babes':   {approved:true,  credit:'ink drawings'},
@@ -466,9 +468,6 @@ const CREATORS={
    part = torso | legs | feet   (heads stay headless: always the silhouette)
    Then list the file names here, without extension, e.g. 'jugodepapaya_torso_1'. */
 const CREATOR_TILES=[
-  '_lorenzo7111_torso_1',
-  '_lorenzo7111_torso_2',
-  '_lorenzo7111_torso_3',
   'florianfuckingschwab_legs_1',
   'florianfuckingschwab_legs_2',
   'florianfuckingschwab_torso_1',
@@ -482,23 +481,6 @@ const CREATOR_TILES=[
   'donnymeloche_torso_4',
   'donnymeloche_torso_5',
   'donnymeloche_torso_2',
-  'gayhorror666_feet_1',
-  'gayhorror666_torso_1',
-  'gayhorror666_torso_2',
-  'gayhorror666_torso_3',
-  'gayhorror666_torso_4',
-  'geelherme_feet_1',
-  'geelherme_legs_1',
-  'geelherme_legs_2',
-  'geelherme_torso_1',
-  'geelherme_torso_2',
-  'geelherme_torso_3',
-  'geelherme_torso_4',
-  'hurricane_season2_legs_1',
-  'hurricane_season2_legs_2',
-  'hurricane_season2_legs_3',
-  'hurricane_season2_torso_1',
-  'hurricane_season2_torso_2',
   'jugodepapaya_feet_1',
   'jugodepapaya_feet_2',
   'jugodepapaya_torso_4',
@@ -508,9 +490,6 @@ const CREATOR_TILES=[
   'jugodepapaya_feet_3',
   'jugodepapaya_legs_1',
   'jugodepapaya_torso_2',
-  'lukaszleja_feet_2',
-  'lukaszleja_torso_1',
-  'lukaszleja_torso_2',
   'nikolaivoelcker_legs_1',
   'nikolaivoelcker_torso_1',
   'nikolaivoelcker_torso_2',
@@ -524,22 +503,6 @@ const CREATOR_TILES=[
   'prettys_babes_feet_4',
   'prettys_babes_legs_1',
   'prettys_babes_torso_1',
-  'silverandgelatin_legs_1',
-  'silverandgelatin_torso_1',
-  'studio_bara_legs_1',
-  'studio_bara_torso_1',
-  'thelawunda_legs_1',
-  'thelawunda_legs_2',
-  'thelawunda_torso_1',
-  'thelawunda_torso_2',
-  'twinks.in.art_legs_1',
-  'twinks.in.art_torso_1',
-  'twinks.in.art_torso_2',
-  'yannsheep_legs_1',
-  'sasha.from.paris_feet_1',
-  'sasha.from.paris_feet_2',
-  'sasha.from.paris_torso_1',
-  'sasha.from.paris_torso_2',
   'agostovs_legs_1',
   'agostovs_legs_2',
   'agostovs_legs_3',
@@ -556,12 +519,6 @@ const CREATOR_TILES=[
   'bruterdam_torso_2',
   'bruterdam_torso_3',
   'bruterdam_torso_4',
-  'lorenzosuited_feet_1',
-  'lorenzosuited_feet_2',
-  'lorenzosuited_feet_3',
-  'lorenzosuited_feet_4',
-  'lorenzosuited_legs_1',
-  'lorenzosuited_legs_2',
   'punktormo_legs_1',
   'punktormo_torso_1',
   'punktormo_torso_2',
@@ -611,9 +568,6 @@ const CREATOR_TILES=[
   '_thanyyyyy_torso_5',
   '_thanyyyyy_torso_6',
   '_thanyyyyy_torso_7',
-  'jessexjordan_torso_1',
-  'jessexjordan_legs_1',
-  'jessexjordan_legs_2',
 ];
 
 /* ================= DECK: tile looks evolve the more you play =================
@@ -628,7 +582,7 @@ SKIN.forEach(c=>DECK.push({lvl:0,type:'torso',svg:'torso',skin:c},{lvl:0,type:'l
 const PHOTO=['silverandgelatin','nikolaivoelcker','_lorenzo7111','thelawunda','hurricane_season2','gayhorror666','geelherme'];
 CREATOR_TILES.forEach(f=>{ const p=f.split('_'); const part=p[p.length-2], by=p.slice(0,-2).join('_');
   if(!['torso','legs','feet'].includes(part)||!CREATORS[by]){console.warn('HEADLESS: bad creator tile name',f);return}
-  if(!CREATORS[by].approved&&!SHOW_PENDING)return;
+  if(!CREATORS[by].approved)return;   /* no tile without permission, ever */
   DECK.push({lvl:0,type:part,img:`assets/tiles/creators/${f}.jpg`,by}); });
 let LIFE=0; try{LIFE=+localStorage.getItem('hl_life')||0}catch(e){}
 const FORCE_LVL=new URLSearchParams(location.search).get('lvl');   // ?lvl=2 to preview a level
