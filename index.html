@@ -574,6 +574,8 @@ const CREATOR_TILES=[
   '_thanyyyyy_torso_8',
   'eakins_torso_1',
   'eakins_legs_1',
+  'eakins_torso_2',
+  'eakins_legs_2',
   'sandow_torso_1',
   'sandow_feet_1',
   'sandow_torso_2',
@@ -784,7 +786,8 @@ function renderCredits(){
     const pic=`<img class="pic" src="assets/avatars/${h}.jpg" alt="" onerror="this.remove()">`;
     const art=imgs.length? imgs.map((src,i)=>`<img ${i===0?`src="${src}" class="on"`:`data-src="${src}"`} alt="" loading="lazy">`).join('') : h.replace(/[^a-z]/gi,'')[0].toUpperCase();
     const mine=tilesBy[h]||[]; /* approved artists said yes: their tiles show even before the password */
-    const grid=c.approved&&mine.length? mine.slice(0,6).map(src=>`<a href="${url}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy"></a>`).join('') : '';
+    /* 6 tiles = two full rows of three. Fewer than 6 would leave a ragged row, so show 3. */
+    const grid=c.approved&&mine.length? mine.slice(0,mine.length>=6?6:3).map(src=>`<a href="${url}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy"></a>`).join('') : '';
     return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">${c.name||'@'+h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
       <a class="go" href="${url}" target="_blank" rel="noopener"><span class="go-t">See more </span>↗</a>${grid?`<div class="grid">${grid}</div>`:''}</div>`; }).join('');
   fitCredits();
