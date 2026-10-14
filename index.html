@@ -450,6 +450,10 @@ const CREATORS={
   'donnymeloche':    {approved:true,  credit:'digital illustration'},
   '_n.ivy':          {approved:true,  credit:'acrylic & oil pastel'},
   'agostovs':        {approved:true,  credit:'3D character design', url:'https://agostinavallesaggio.com/'},
+  /* public domain: no living rights holder to ask. Credit names the work, not an account. */
+  'muybridge':       {approved:true,  archive:true, name:'Eadweard Muybridge', credit:'Animal Locomotion, 1887 · public domain', url:'https://commons.wikimedia.org/wiki/Category:Animal_locomotion_(Boston_Public_Library)'},
+  'eakins':          {approved:true,  archive:true, name:'Thomas Eakins', credit:'photographs, c. 1883 · public domain', url:'https://commons.wikimedia.org/wiki/Category:Thomas_Eakins'},
+  'sandow':          {approved:true,  archive:true, name:'Eugen Sandow', credit:'photographed by D. Bernard &amp; Co., Melbourne, c. 1902 · public domain', url:'https://wellcomecollection.org/search/works?query=Eugen%20Sandow'},
   'studio_bara':     {approved:false, credit:'colour pencil drawings'},
   'lukaszleja':      {approved:false, credit:'oil paintings'},
   'yannsheep':       {approved:false, credit:'paintings'},
@@ -569,6 +573,24 @@ const CREATOR_TILES=[
   '_thanyyyyy_torso_6',
   '_thanyyyyy_torso_7',
   '_thanyyyyy_torso_8',
+  'muybridge_torso_1',
+  'muybridge_legs_1',
+  'muybridge_torso_2',
+  'muybridge_legs_2',
+  'muybridge_feet_1',
+  'muybridge_torso_3',
+  'eakins_torso_1',
+  'eakins_legs_1',
+  'eakins_torso_2',
+  'eakins_legs_2',
+  'eakins_torso_3',
+  'eakins_legs_3',
+  'sandow_torso_1',
+  'sandow_legs_1',
+  'sandow_feet_1',
+  'sandow_torso_2',
+  'sandow_legs_2',
+  'sandow_torso_3',
 ];
 
 /* ================= DECK: tile looks evolve the more you play =================
@@ -776,7 +798,7 @@ function renderCredits(){
     const art=imgs.length? imgs.map((src,i)=>`<img ${i===0?`src="${src}" class="on"`:`data-src="${src}"`} alt="" loading="lazy">`).join('') : h.replace(/[^a-z]/gi,'')[0].toUpperCase();
     const mine=tilesBy[h]||[]; /* approved artists said yes: their tiles show even before the password */
     const grid=c.approved&&mine.length? mine.slice(0,6).map(src=>`<a href="${url}" target="_blank" rel="noopener"><img src="${src}" alt="" loading="lazy"></a>`).join('') : '';
-    return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">@${h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
+    return `<div class="cr-card"><div class="av">${pic}${art}</div><div class="tx"><span class="h">${c.name||'@'+h}</span>${c.approved?'':'<span class="pend">permission pending</span>'}</div>
       <a class="go" href="${url}" target="_blank" rel="noopener"><span class="go-t">See more </span>↗</a>${grid?`<div class="grid">${grid}</div>`:''}</div>`; }).join('');
   fitCredits();
 }
